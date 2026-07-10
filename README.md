@@ -6,7 +6,7 @@ A self-built security monitoring lab simulating a small-scale SOC data pipeline:
 
 This lab ingests native Windows Security/System/Application logs and Sysmon process, network, and file activity into Splunk, using the same architecture pattern (Universal Forwarder → Indexer, with Technology Add-ons for parsing) found in production SOC environments.
 
-**Goal:** build hands-on experience with the full data pipeline a SOC analyst works with daily — not just running Splunk searches, but understanding how data gets from an endpoint into a usable, field-extracted format.
+**Goal:** build hands-on experience with the full data pipeline a SOC analyst works with daily, not just running Splunk searches, but understanding how data gets from an endpoint into a usable, field-extracted format.
 
 ## Architecture
 
@@ -21,7 +21,7 @@ graph TD
     E --> F[SPL Searches / Detections / Dashboards]
 ```
 
-**Note:** the forwarder and indexer both run on the same physical host in this lab, rather than separate machines as in a typical production deployment. This surfaced a real config conflict — two independently-installed Sysmon add-ons (one on the forwarder, one on the indexer) both touching sourcetype normalization for the same data. See [`docs/troubleshooting.md`](docs/troubleshooting.md) for how that was diagnosed and fixed.
+**Note:** the forwarder and indexer both run on the same physical host in this lab, rather than separate machines as in a typical production deployment. This surfaced a real config conflict: two independently-installed Sysmon add-ons (one on the forwarder, one on the indexer) both touching sourcetype normalization for the same data. See [`docs/troubleshooting.md`](docs/troubleshooting.md) for how that was diagnosed and fixed.
 
 ## What's in this repo
 
@@ -42,4 +42,4 @@ graph TD
 
 ## Why this project
 
-Built as part of my hands-on preparation for SOC Analyst / Security Analyst roles, following CompTIA Security+ certification. The focus here is understanding log pipeline architecture, sourcetype/CIM mapping, and the kind of data plumbing issues that come up in real environments — not just running canned searches.
+Built as part of my hands-on preparation for SOC Analyst / Security Analyst roles, following CompTIA Security+ certification. The focus here is understanding log pipeline architecture, sourcetype mapping, and the kind of data plumbing issues that come up in real environments.
