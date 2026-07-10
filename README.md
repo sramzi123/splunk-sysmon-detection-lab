@@ -28,7 +28,7 @@ graph TD
 | Path | Description |
 |---|---|
 | [`docs/setup.md`](docs/setup.md) | Full setup walkthrough: Sysmon, Universal Forwarder, TA installation, and configuration |
-| [`docs/troubleshooting.md`](docs/troubleshooting.md) | A real config conflict I diagnosed and fixed — two overlapping Sysmon TAs silently renaming sourcetypes at index time |
+| [`docs/troubleshooting.md`](docs/troubleshooting.md) | A real config conflict I diagnosed and fixed: two overlapping Sysmon TAs silently renaming sourcetypes at index time |
 
 *(Detections, Atomic Red Team results, and dashboard screenshots to be added as the lab grows.)*
 
