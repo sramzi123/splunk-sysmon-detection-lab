@@ -11,15 +11,26 @@ This lab ingests native Windows Security/System/Application logs and Sysmon proc
 ## Architecture
 
 ```mermaid
-graph TD
-    subgraph Host["DESKTOP-HJSIADG — single Windows host"]
-        A[Sysmon<br/>SwiftOnSecurity config] --> B[Windows Event Log<br/>Security / System / Application / Sysmon-Operational]
-        B --> C[Splunk Universal Forwarder<br/>TA-microsoft-sysmon]
-        C --> D[Splunk Enterprise<br/>Indexer + Search Head<br/>Splunk_TA_microsoft_sysmon]
-    end
-    D --> E[(index=main)]
-    E --> F[SPL Searches / Detections / Dashboards]
-```
+                     Internet
+                          │
+                          │
+                 Splunk Cloud Platform
+                          ▲
+                          │
+                HTTPS / TLS Forwarding
+                          │
+             Splunk Universal Forwarder
+                          ▲
+                          │
+         ┌────────────────┴──────────────┐
+         │                               │
+         │                               │
+ Windows Event Logs                 Sysmon
+         │                               │
+         └──────────────┬────────────────┘
+                        │
+                        ▼
+               Windows 11 Endpoint
 
 **Note:** the forwarder and indexer both run on the same physical host in this lab, rather than separate machines as in a typical production deployment. This surfaced a real config conflict: two independently-installed Sysmon add-ons (one on the forwarder, one on the indexer) both touching sourcetype normalization for the same data. See [`docs/troubleshooting.md`](docs/troubleshooting.md) for how that was diagnosed and fixed.
 
