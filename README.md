@@ -1,197 +1,78 @@
-# 🛡️ Home SOC Lab - Splunk Cloud & Sysmon
+# Home SOC Lab
 
-![Status](https://img.shields.io/badge/Status-In%20Progress-green)
-![Platform](https://img.shields.io/badge/Platform-Windows%2011-blue)
-![SIEM](https://img.shields.io/badge/SIEM-Splunk%20Cloud-orange)
+This repository documents my home SOC lab built around Splunk Cloud. The goal of this project is to better understand how endpoint telemetry is collected, forwarded, and analyzed in a SIEM while building practical detection engineering skills.
 
-## Overview
+The lab currently consists of a Windows 11 endpoint forwarding Windows Event Logs and Sysmon telemetry to Splunk Cloud using the Splunk Universal Forwarder. As the project grows, I plan to add custom detections, dashboards, attack simulations, and Active Directory.
 
-This project documents the development of a Security Operations Center (SOC) home lab designed to emulate enterprise endpoint monitoring and detection workflows.
+## Current Lab
 
-The lab currently collects Windows Event Logs and Sysmon telemetry from a Windows 11 endpoint using the Splunk Universal Forwarder and forwards the data to Splunk Cloud for centralized log analysis, threat hunting, and detection engineering.
+- Windows 11
+- Splunk Cloud
+- Splunk Universal Forwarder
+- Windows Event Logs
+  - Security
+  - System
+  - Application
+- Sysmon
 
-The long-term goal is to expand this environment into a multi-host detection lab capable of simulating attacker behavior, building SPL detections, and documenting investigations aligned with the MITRE ATT&CK framework.
+## Architecture
 
----
+> *(Insert architecture diagram here)*
 
-## Objectives
+## Current Progress
 
-- Deploy Splunk Cloud as a SIEM
-- Collect Windows Event Logs
-- Deploy Sysmon for endpoint telemetry
-- Develop SPL detection queries
-- Map detections to MITRE ATT&CK
-- Simulate attacker techniques
-- Build dashboards for security monitoring
-- Document detection engineering workflows
+- [x] Configure Splunk Cloud
+- [x] Install Splunk Universal Forwarder
+- [x] Forward Windows Event Logs
+- [x] Install and configure Sysmon
+- [x] Verify telemetry ingestion
+- [ ] Create detection rules
+- [ ] Build dashboards
+- [ ] Simulate attacks
+- [ ] Map detections to MITRE ATT&CK
 
----
-
-# Current Architecture
-
-(Add architecture diagram here)
-
----
-
-## Current Environment
-
-| Component | Status |
-|------------|--------|
-| Windows 11 Endpoint | ✅ |
-| Splunk Cloud | ✅ |
-| Splunk Universal Forwarder | ✅ |
-| Windows Event Logs | ✅ |
-| Sysmon | ✅ |
-| Dashboards | 🚧 |
-| MITRE ATT&CK Detections | 🚧 |
-| Atomic Red Team | ⏳ |
-| Active Directory | ⏳ |
-
----
-
-# Data Sources
-
-Currently ingesting:
+## Screenshots
 
 ### Windows Event Logs
 
-- Security
-- System
-- Application
+*(Insert screenshot)*
 
-### Sysmon
+### Sysmon Events
 
-- Event ID 1 – Process Creation
-- Event ID 3 – Network Connections
-- Event ID 11 – File Creation
-- Event ID 13 – Registry Modifications
-- Event ID 22 – DNS Queries
+*(Insert screenshot)*
 
----
+### Splunk Searches
 
-# Current Detections
+*(Insert screenshot)*
 
-| Detection | Status |
-|------------|--------|
-| Process Creation | ✅ |
-| PowerShell Execution | 🚧 |
-| Failed Logon Detection | 🚧 |
-| Registry Modification | 🚧 |
-| DNS Monitoring | 🚧 |
+## Repository Structure
 
----
-
-# Repository Structure
-
-```text
+```
 architecture/
-detections/
-spl/
-dashboards/
-screenshots/
 docs/
-attack-simulations/
-```
-
----
-
-# Example SPL Searches
-
-Example searches are stored under
-
-```
+screenshots/
 spl/
+detections/
 ```
 
-Examples include:
+## Roadmap
 
-- Process Creation
-- PowerShell Execution
-- Failed Logons
-- Registry Changes
-- DNS Queries
+### Phase 1
+- Windows Event Log collection
+- Sysmon deployment
+- Splunk Cloud integration
 
----
+### Phase 2
+- Failed logon detection
+- PowerShell detection
+- Registry monitoring
 
-# MITRE ATT&CK Coverage
-
-| Technique | Detection |
-|------------|-----------|
-| T1059.001 | PowerShell |
-| T1112 | Registry Modification |
-| T1071.004 | DNS |
-| T1078 | Valid Accounts (planned) |
-
----
-
-# Screenshots
-
-## Windows Event Logs
-
-(Add Screenshot)
-
-## Sysmon Process Creation
-
-(Add Screenshot)
-
-## Splunk Search Results
-
-(Add Screenshot)
-
-## Dashboard
-
-(Add Screenshot)
-
----
-
-# Roadmap
-
-## Phase 1 ✅
-
-- Install Splunk Universal Forwarder
-- Connect to Splunk Cloud
-- Install Sysmon
-- Verify telemetry ingestion
-
-## Phase 2 🚧
-
-- Failed Logon Detection
-- PowerShell Detection
-- Registry Monitoring
-- Dashboard Development
-
-## Phase 3
-
+### Phase 3
 - Atomic Red Team
-- MITRE ATT&CK Detection Library
-- Detection Validation
-- Incident Reports
+- Dashboards
+- MITRE ATT&CK mapping
 
-## Phase 4
-
+### Phase 4
 - Active Directory
-- Multi-endpoint Monitoring
-- Attack Simulation
-- Threat Hunting
-
----
-
-# Skills Demonstrated
-
-- Windows Administration
-- SIEM Deployment
-- Splunk SPL
-- Windows Event Logging
-- Sysmon
-- Detection Engineering
-- Threat Hunting
-- Log Analysis
-- MITRE ATT&CK
-
----
-
-# References
-
-- Splunk Documentation
-- Sysinternals Sysmon
-- MITRE ATT&CK
+- Multi-endpoint monitoring
+- Threat hunting scenarios
