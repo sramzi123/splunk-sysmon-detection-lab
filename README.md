@@ -1,45 +1,70 @@
-# Home SOC Lab: Windows Event Logs + Sysmon in Splunk
+# Home SOC Lab
 
-A self-built security monitoring lab simulating a small-scale SOC data pipeline: Windows endpoint telemetry (Event Logs + Sysmon) forwarded into Splunk, parsed into CIM-compliant fields, and ready for detection engineering.
+This repository documents my home SOC lab, built to better understand how endpoint telemetry is collected, forwarded, and analyzed in a SIEM, while building practical detection engineering skills.
 
-## Overview
+The lab currently consists of a Windows 11 endpoint forwarding Windows Event Logs and Sysmon telemetry through a Splunk Universal Forwarder into a local Splunk Enterprise instance. As the project grows, I plan to add custom detections, dashboards, attack simulations, and Active Directory.
 
-This lab ingests native Windows Security/System/Application logs and Sysmon process, network, and file activity into Splunk, using the same architecture pattern (Universal Forwarder → Indexer, with Technology Add-ons for parsing) found in production SOC environments.
+## Current Lab
 
-**Goal:** build hands-on experience with the full data pipeline a SOC analyst works with daily, not just running Splunk searches, but understanding how data gets from an endpoint into a usable, field-extracted format.
+- Windows 11
+- Splunk Enterprise (local instance)
+- Splunk Universal Forwarder
+- Windows Event Logs
+  - Security
+  - System
+  - Application
+- Sysmon
 
 ## Architecture
 
-```mermaid
-graph TD
-    subgraph Host["DESKTOP-HJSIADG — single Windows host"]
-        A[Sysmon<br/>SwiftOnSecurity config] --> B[Windows Event Log<br/>Security / System / Application / Sysmon-Operational]
-        B --> C[Splunk Universal Forwarder<br/>TA-microsoft-sysmon]
-        C --> D[Splunk Enterprise<br/>Indexer + Search Head<br/>Splunk_TA_microsoft_sysmon]
-    end
-    D --> E[(index=main)]
-    E --> F[SPL Searches / Detections / Dashboards]
+![Architecture diagram](architecture/homelab-architecture.png)
+
+## Documentation
+
+- [Setup Guide](docs/setup.md) — Sysmon, Universal Forwarder, and TA configuration
+- [Troubleshooting: Sourcetype Conflict](docs/troubleshooting.md) — diagnosing a real config conflict between two overlapping Sysmon add-ons
+- [Investigation: 4625 Baseline vs Anomaly](docs/analysis-4625-baseline-vs-anomaly.md) — reading failed logon events carefully instead of taking them at face value
+
+## Current Progress
+
+- [x] Install and configure Splunk Enterprise
+- [x] Install Splunk Universal Forwarder
+- [x] Forward Windows Event Logs
+- [x] Install and configure Sysmon
+- [x] Verify telemetry ingestion
+- [x] Diagnose and fix a sourcetype parsing conflict
+- [ ] Create detection rules
+- [ ] Build dashboards
+- [ ] Simulate attacks
+- [ ] Map detections to MITRE ATT&CK
+
+## Repository Structure
+
+```
+architecture/     diagram source and exported image
+docs/             setup guide, troubleshooting, and investigation writeups
+screenshots/      raw evidence referenced from docs
+detections/       SPL queries once built
 ```
 
-**Note:** the forwarder and indexer both run on the same physical host in this lab, rather than separate machines as in a typical production deployment. This surfaced a real config conflict: two independently-installed Sysmon add-ons (one on the forwarder, one on the indexer) both touching sourcetype normalization for the same data. See [`docs/troubleshooting.md`](docs/troubleshooting.md) for how that was diagnosed and fixed.
+## Roadmap
 
-## What's in this repo
+### Phase 1
+- Windows Event Log collection
+- Sysmon deployment
+- Splunk Enterprise integration
 
-| Path | Description |
-|---|---|
-| [`docs/setup.md`](docs/setup.md) | Full setup walkthrough: Sysmon, Universal Forwarder, TA installation, and configuration |
-| [`docs/troubleshooting.md`](docs/troubleshooting.md) | A real config conflict I diagnosed and fixed: two overlapping Sysmon TAs silently renaming sourcetypes at index time |
+### Phase 2
+- Failed logon detection
+- PowerShell detection
+- Registry monitoring
 
-*(Detections, Atomic Red Team results, and dashboard screenshots to be added as the lab grows.)*
+### Phase 3
+- Atomic Red Team
+- Dashboards
+- MITRE ATT&CK mapping
 
-## Tech Stack
-
-- Splunk Enterprise (local instance)
-- Splunk Universal Forwarder
-- Sysmon (SwiftOnSecurity configuration)
-- TA-microsoft-sysmon (forwarder-side input/sourcetype)
-- Splunk_TA_microsoft_sysmon (indexer-side CIM field extraction)
-
-## Why this project
-
-Built as part of my hands-on preparation for SOC Analyst / Security Analyst roles, following CompTIA Security+ certification. The focus here is understanding log pipeline architecture, sourcetype mapping, and the kind of data plumbing issues that come up in real environments.
+### Phase 4
+- Active Directory
+- Multi endpoint monitoring
+- Threat hunting scenarios
