@@ -4,6 +4,8 @@
 
 After getting Sysmon installed and the TA on my Universal Forwarder configured with an explicit sourcetype override, I expected events to land in Splunk tagged as XmlWinEventLog:Microsoft Windows Sysmon/Operational. Instead, every single event kept showing up as the generic xmlwineventlog sourcetype, no matter what I changed.
 
+(NOTE: I ran across this problem again on a fresh install, which means its a characteristic of the TA package itself)
+
 I checked the forwarder config with btool and it confirmed my sourcetype setting was correct and active.
 
 ```powershell
