@@ -7,7 +7,7 @@ After getting Sysmon installed and the TA on my Universal Forwarder configured w
 I checked the forwarder config with btool and it confirmed my sourcetype setting was correct and active.
 
 ```powershell
-& "C:\Program Files\SplunkUniversalForwarder\bin\splunk.exe" btool inputs list "WinEventLog://Microsoft Windows Sysmon/Operational" --debug
+& "C:\Program Files\SplunkUniversalForwarder\bin\splunk.exe" btool inputs list "WinEventLog://Microsoft-Windows-Sysmon/Operational" --debug
 ```
 
 ![Forwarder config confirmed correct](../screenshots/troubleshooting-01-btool-forwarder-confirmation.png)
@@ -19,7 +19,7 @@ The output showed my sourcetype line sitting there, clearly winning. So the forw
 Since I also run a local Splunk Enterprise instance on the same machine, I checked the props configuration on the indexer side using the same tool.
 
 ```powershell
-& "C:\Program Files\Splunk\bin\splunk.exe" btool props list "XmlWinEventLog:Microsoft Windows Sysmon/Operational" --debug
+& "C:\Program Files\Splunk\bin\splunk.exe" btool props list "XmlWinEventLog:Microsoft-Windows-Sysmon/Operational" --debug
 ```
 
 And there it was:
@@ -45,7 +45,7 @@ New-Item -ItemType Directory -Path "C:\Program Files\Splunk\etc\apps\Splunk_TA_m
 Then wrote a blank rename value into a new props.conf there.
 
 ```ini
-[XmlWinEventLog:Microsoft Windows Sysmon/Operational]
+[XmlWinEventLog:Microsoft-Windows-Sysmon/Operational]
 rename =
 ```
 
@@ -58,7 +58,7 @@ Restarted Splunk Enterprise to apply it.
 Confirmed the override had actually taken over using btool again.
 
 ```powershell
-& "C:\Program Files\Splunk\bin\splunk.exe" btool props list "XmlWinEventLog:Microsoft Windows Sysmon/Operational" --debug | Select-String "rename"
+& "C:\Program Files\Splunk\bin\splunk.exe" btool props list "XmlWinEventLog:Microsoft-Windows-Sysmon/Operational" --debug | Select-String "rename"
 ```
 
 ![Local override confirmed winning](../screenshots/troubleshooting-03-btool-override-confirmed.png)
