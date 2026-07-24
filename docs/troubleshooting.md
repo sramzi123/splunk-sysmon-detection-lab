@@ -78,7 +78,7 @@ New events finally landed under the correct sourcetype, with fields like process
 
 I ran into this exact same problem a second time, on a completely fresh Splunk Enterprise install done weeks later. Same symptom, same generic sourcetype, same fix required. That is not a coincidence. It confirms this rename rule is not a one time misconfiguration on my part, it is a built in characteristic of how this TA package ships. Anyone installing it fresh will hit the same silent override unless they know to check for it.
 
-That distinction matters. A bug you hit once could be user error. A bug you hit twice, independently, on two separate installs, is a real property of the tool, and worth documenting as one.
+If it only happened once, I could chalk it up to something I did wrong. But it happened again on a totally separate install, with nothing else changed, so at that point it's not me, it's just how the TA is packaged.
 
 ## What I actually learned from this
 
