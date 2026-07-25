@@ -16,16 +16,6 @@ index=main host="DESKTOP-HJSIADG" EventCode=4625
 
 ![Initial 4625 table view](../screenshots/analysis-01-initial-4625-table.png)
 
-<<<<<<< HEAD
-=======
-| _time | Account_Name (Subject) | Logon_Type | Logon_Process | Source_Network_Address | Status / Sub Status |
-|---|---|---|---|---|---|
-| 13:16:42.103 | DESKTOP HJSIADG$ | 2 | User32 | 127.0.0.1 | 0xC000006D / 0xC0000380 |
-| 13:16:40.418 | DESKTOP HJSIADG$ | 2 | User32 | 127.0.0.1 | 0xC000006D / 0xC0000380 |
-| 13:16:39.186 | DESKTOP HJSIADG$ | 2 | User32 | 127.0.0.1 | 0xC000006D / 0xC0000380 |
-| 13:16:37.430 | DESKTOP HJSIADG$ | 2 | User32 | 127.0.0.1 | 0xC000006D / 0xC0000380 |
-
->>>>>>> 2934309cad3b469c135e3d2eebd2628f0000ab40
 Four events, seconds apart, same host. It matched the story I already had in my head, so it would have been easy to just screenshot this and call it a brute force detection.
 
 ## Where it fell apart
