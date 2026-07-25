@@ -1,0 +1,9 @@
+# Detection: Encoded PowerShell Execution
+# ATT&CK: T1059.001 (PowerShell), T1027 (Obfuscated Files or Information)
+# Description: Detects PowerShell execution using -EncodedCommand or its
+# shorthand aliases (-enc, -e), a common technique for obfuscating
+# command content from casual log review.
+
+index=main sourcetype="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1
+CommandLine="*-EncodedCommand*" OR CommandLine="*-enc*" OR CommandLine="*-e *"
+| table _time, host, user, process_name, parent_process_name, CommandLine
