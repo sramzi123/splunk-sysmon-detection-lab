@@ -27,7 +27,6 @@ Subject is the account reporting the failure. This is often just a local system 
 Account For Which Logon Failed is the actual username that was typed and rejected. This is the field that should show me.
 
 The table above only surfaces the Subject, which is why every row shows a machine account instead of my name. So I pulled the raw event to see the rest of it.
-<<<<<<< HEAD
 
 ```
 Subject:
