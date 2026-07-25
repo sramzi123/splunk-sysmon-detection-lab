@@ -7,7 +7,7 @@ After getting Sysmon installed and the TA on my Universal Forwarder configured w
 I checked the forwarder config with btool and it confirmed my sourcetype setting was correct and active.
 
 ```powershell
-& "C:\Program Files\SplunkUniversalForwarder\bin\splunk.exe" btool inputs list "WinEventLog://Microsoft Windows Sysmon/Operational" --debug
+& "C:\Program Files\SplunkUniversalForwarder\bin\splunk.exe" btool inputs list "WinEventLog://Microsoft-Windows-Sysmon/Operational" --debug
 ```
 
 ![Forwarder config confirmed correct](../screenshots/troubleshooting-01-btool-forwarder-confirmation.png)
@@ -19,7 +19,7 @@ The output showed my sourcetype line sitting there, clearly winning. So the forw
 Since I also run a local Splunk Enterprise instance on the same machine, I checked the props configuration on the indexer side using the same tool.
 
 ```powershell
-& "C:\Program Files\Splunk\bin\splunk.exe" btool props list "XmlWinEventLog:Microsoft Windows Sysmon/Operational" --debug
+& "C:\Program Files\Splunk\bin\splunk.exe" btool props list "XmlWinEventLog:Microsoft-Windows-Sysmon/Operational" --debug
 ```
 
 And there it was:
@@ -45,7 +45,7 @@ New-Item -ItemType Directory -Path "C:\Program Files\Splunk\etc\apps\Splunk_TA_m
 Then wrote a blank rename value into a new props.conf there.
 
 ```ini
-[XmlWinEventLog:Microsoft Windows Sysmon/Operational]
+[XmlWinEventLog:Microsoft-Windows-Sysmon/Operational]
 rename =
 ```
 
@@ -58,7 +58,7 @@ Restarted Splunk Enterprise to apply it.
 Confirmed the override had actually taken over using btool again.
 
 ```powershell
-& "C:\Program Files\Splunk\bin\splunk.exe" btool props list "XmlWinEventLog:Microsoft Windows Sysmon/Operational" --debug | Select-String "rename"
+& "C:\Program Files\Splunk\bin\splunk.exe" btool props list "XmlWinEventLog:Microsoft-Windows-Sysmon/Operational" --debug | Select-String "rename"
 ```
 
 ![Local override confirmed winning](../screenshots/troubleshooting-03-btool-override-confirmed.png)
@@ -78,10 +78,10 @@ New events finally landed under the correct sourcetype, with fields like process
 
 I ran into this exact same problem a second time, on a completely fresh Splunk Enterprise install done weeks later. Same symptom, same generic sourcetype, same fix required. That is not a coincidence. It confirms this rename rule is not a one time misconfiguration on my part, it is a built in characteristic of how this TA package ships. Anyone installing it fresh will hit the same silent override unless they know to check for it.
 
-That distinction matters. A bug you hit once could be user error. A bug you hit twice, independently, on two separate installs, is a real property of the tool, and worth documenting as one.
+If it only happened once, I could chalk it up to something I did wrong. But it happened again on a totally separate install, with nothing else changed, so at that point it's not me, it's just how the TA is packaged.
 
 ## What I actually learned from this
 
-Config precedence in Splunk is not something you can guess your way through. btool exists for a reason, and it turned out to be the only tool that could tell me, with certainty, which file was actually winning for a given setting. Assuming a config is correct because you wrote it that way is not the same as confirming it is the one actually being used.
+Honestly, before this I would have just assumed my config was right because I wrote it and it looked right. Turns out that means nothing if something else down the line is quietly overriding it. btool was the only thing that actually showed me the truth, which file was winning, instead of me just guessing based on what I typed. Writing a setting and it actually being the one Splunk uses are two different things, and I didn't know that until I hit this.
 
-The bigger lesson is about how real environments end up this way. Nobody sets out to install two conflicting add ons on purpose. They accumulate over time, installed by different people for reasonable reasons, and nobody checks whether they overlap until something stops making sense. That is exactly the kind of quiet, unglamorous problem a SOC analyst or Splunk admin runs into constantly, and it is a much better story to be able to tell than simply saying the install went smoothly.
+The bigger thing this taught me is how these problems actually happen in real environments. Nobody installs two conflicting add ons on purpose. They just pile up over time, each one added for a decent reason, and nobody notices they're stepping on each other until something breaks in a way that doesn't make sense. That's a pretty normal day for a SOC analyst or a Splunk admin, and honestly it's a better thing to be able to talk about than just saying the install went fine.
