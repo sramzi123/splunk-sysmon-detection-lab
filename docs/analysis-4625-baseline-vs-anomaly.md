@@ -64,9 +64,9 @@ index=main host="DESKTOP-HJSIADG" sourcetype="WinEventLog:Security" earliest="08
 
 ![Burst of Credential Manager reads under my real account right before the failure](../screenshots/analysis-04-5379-correlation.png)
 
-Right before the 4625 failure landed, there was a burst of EventCode 5379 events, Credential Manager credential reads, tagged to my actual account, Shaza, milliseconds earlier. That is the closest thing to my real account showing up anywhere in this whole sequence. My best read is that typing the password triggers a check against cached credentials first, and when that comes back negative the actual logon failure still gets attributed to the machine account rather than to me. I want to be honest that I do not have solid documentation confirming that is exactly what is happening internally, it is my interpretation of the timing, not a confirmed mechanism.
+Looking at the full sequence, I initially thought the Shaza reads were the closest thing to the failure and almost wrote it up that way. Looking at the actual timestamps more carefully, that is not quite right. The Shaza events land around 15:47:35.116 to 35.119, roughly a second and a half before the failure. The events sitting immediately next to the failure itself, at 15:47:36.591 through 36.593, are all still tagged to the machine account. So even on this closer look, my real account shows up somewhere in the same short window, but it is not the thing directly adjacent to the failure. I do not have a clean, confirmed link between the two, and I would rather say that plainly than round it up into a tidier finding than the data actually supports.
 
-What I can say for certain is the observed result: two separate tests, PIN and password, both produced a 4625 failure that never resolved to my real username. That is a stronger and more complete finding than the PIN test alone gave me.
+What I can say for certain is the observed result: two separate tests, PIN and password, both produced a 4625 failure that never resolved to my real username, and neither test gave me a fully attributable link between my account and the failure itself.
 
 ## What this actually taught me
 
