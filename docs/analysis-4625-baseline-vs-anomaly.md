@@ -10,11 +10,11 @@ I almost took it at face value. Then I actually read the fields.
 
 ```spl
 index=main host="DESKTOP-HJSIADG" EventCode=4625
-| table _time, Account_Name, Logon_Type, Logon_Process, Workstation_Name, Source_Network_Address, Failure_Reason, Status, Sub_Status
-| sort -_time
+| table \_time, Account\_Name, Logon\_Type, Logon\_Process, Workstation\_Name, Source\_Network\_Address, Failure\_Reason, Status, Sub\_Status
+| sort -\_time
 ```
 
-![Initial 4625 table view](../screenshots/analysis-01-initial-4625-table.png)
+!\[Initial 4625 table view](../screenshots/analysis-01-initial-4625-table.png)
 
 Four events, seconds apart, same host. It matched the story I already had in my head, so it would have been easy to just screenshot this and call it a brute force detection.
 
@@ -28,7 +28,7 @@ Account For Which Logon Failed is the actual username that was typed and rejecte
 
 The table above only surfaces the Subject, which is why every row shows a machine account instead of my name. So I pulled the raw event to see the rest of it.
 
-![Raw event showing the blank target account](../screenshots/analysis-02-raw-event-blank-target.png)
+!\[Raw event showing the blank target account](../screenshots/analysis-02-raw-event-blank-target.png)
 
 The target account field was blank, with a Null SID. That stopped me. Even a wrong password still requires Windows to know which username was being attempted. A blank field with a Null SID means the system never got that far. Whatever this was, it was not someone typing my password incorrectly at the lock screen.
 
@@ -46,20 +46,21 @@ I repeated the test using a typed password instead of a PIN. This time the Sub S
 
 Searching more broadly around that timestamp, I found a successful 4624 logon two and a half seconds later. I initially assumed the account name on that success was mine, but running whoami on the actual machine showed my real username was Shaza, not the name that showed up in the result. That one turned out to be a different local placeholder account entirely, unrelated to me.
 
-![Sequence showing the failed attempt and the logons that followed](../screenshots/analysis-03-4624-success-sequence.png)
+!\[Sequence showing the failed attempt and the logons that followed](../screenshots/analysis-03-4624-success-sequence.png)
 
 I have not yet pinned down the exact record showing Shaza succeeding right after a failure. Rather than force a conclusion the data has not earned, I am leaving that open. This document reflects what the evidence actually supports right now, not what would make the tidiest story.
 
 ## What this actually taught me
 
-An event code alone does not tell you what happened. I have looked at this same 4625 code from four different angles now, and it meant something different almost every time.
+An event code alone does not tell you what happened. I looked at this same 4625 code from four different angles and it meant something different almost every time.
 
-The Subject field and the target account field answer two different questions, and mixing them up can make you either miss something real or chase something that is not there.
+The Subject field and the target account field are answering two different questions, and I definitely used to just conflate them without realizing it. Get that wrong and you either miss something real or chase something that was never there in the first place.
 
-A blank target account with a Null SID is worth treating as its own category, separate from an ordinary wrong password failure.
+A blank target account with a Null SID is its own thing, not just a normal wrong password. I hadn't thought about that distinction before this.
 
-Authentication method changes what gets logged. An environment relying on PIN or biometric sign in may have a real gap in 4625 based brute force detection, which is a genuinely useful thing to know if I ever have to build detections for an environment like that.
+And the authentication method piece is the one I keep coming back to. If an environment leans on PIN or biometric sign in, there's a real gap in 4625 based brute force detection that I would not have known to look for otherwise.
 
 ## Where I left it
 
-I chose to stop chasing a perfectly clean before and after pair once it was clear the data was not going to hand me one easily. What I have instead is more honest: a real investigation where my first read of the logs was wrong, and I caught it before writing it down as fact.
+At some point I just decided to stop chasing a perfectly clean before and after pair, since it was pretty clear the data was not going to hand me one easily. What I ended up with instead is honestly more useful anyway, a real investigation where my first read of the logs was wrong and I actually caught it, instead of writing it down as fact and moving on.
+
