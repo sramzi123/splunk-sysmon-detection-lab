@@ -28,18 +28,6 @@ Account For Which Logon Failed is the actual username that was typed and rejecte
 
 The table above only surfaces the Subject, which is why every row shows a machine account instead of my name. So I pulled the raw event to see the rest of it.
 
-```
-Subject:
-    Security ID:    S-1-5-18
-    Account Name:   DESKTOP-HJSIADG$
-    Account Domain: WORKGROUP
-
-Account For Which Logon Failed:
-    Security ID:    S-1-0-0    (Null SID)
-    Account Name:   -
-    Account Domain: -
-```
-
 ![Raw event showing the blank target account](../screenshots/analysis-02-raw-event-blank-target.png)
 
 The target account field was blank, with a Null SID. That stopped me. Even a wrong password still requires Windows to know which username was being attempted. A blank field with a Null SID means the system never got that far. Whatever this was, it was not someone typing my password incorrectly at the lock screen.
