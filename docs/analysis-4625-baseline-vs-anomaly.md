@@ -50,6 +50,8 @@ index=main host="DESKTOP-HJSIADG" EventCode=4625 earliest=-15m
 | sort _time
 ```
 
+![Password retest showing the same blank target account pattern](../screenshots/analysis-03-password-retest.png)
+
 Every single password attempt produced the exact same fingerprint as the PIN attempts before it, same Subject account, same blank target, same svchost.exe and User32 combination. The only thing that changed was the Sub Status, which shifted from the earlier unresolved 0xC0000380 to 0xC000006A, the code that specifically means wrong password. That was a real signal that something different was happening this time, I just was not seeing it in the field I expected.
 
 So I widened the search to look at everything happening around that exact timestamp, not just 4625 events.
@@ -60,7 +62,7 @@ index=main host="DESKTOP-HJSIADG" sourcetype="WinEventLog:Security" earliest="08
 | sort _time
 ```
 
-![Password retest showing the same blank target account pattern](../screenshots/analysis-03-password-retest.png)
+![Burst of Credential Manager reads under my real account right before the failure](../screenshots/analysis-04-5379-correlation.png)
 
 Right before the 4625 failure landed, there was a burst of EventCode 5379 events, Credential Manager credential reads, tagged to my actual account, Shaza, milliseconds earlier. That is the closest thing to my real account showing up anywhere in this whole sequence. My best read is that typing the password triggers a check against cached credentials first, and when that comes back negative the actual logon failure still gets attributed to the machine account rather than to me. I want to be honest that I do not have solid documentation confirming that is exactly what is happening internally, it is my interpretation of the timing, not a confirmed mechanism.
 
