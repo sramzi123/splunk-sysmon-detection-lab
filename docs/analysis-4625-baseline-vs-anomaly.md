@@ -54,24 +54,40 @@ So the four events I was ready to screenshot as my brute force example were not 
 
 ## Trying again, and getting a real answer
 
-I repeated the test using a typed password instead of a PIN. This time the Sub Status changed to 0xC000006A, which specifically means wrong password rather than the earlier unresolved code. That was a real signal.
+I went back and repeated the test using an actual typed password instead of a PIN, expecting this to finally give me a clean, attributable failure. It did not, and that turned out to be the more interesting result.
 
-Searching more broadly around that timestamp, I found a successful 4624 logon two and a half seconds later. I initially assumed the account name on that success was mine, but running whoami on the actual machine showed my real username was Shaza, not the name that showed up in the result. That one turned out to be a different local placeholder account entirely, unrelated to me.
+```spl
+index=main host="DESKTOP-HJSIADG" EventCode=4625 earliest=-15m
+| table _time, Account_Name, Logon_Type, Logon_Process, Failure_Reason, Status, Sub_Status
+| sort _time
+```
 
-![Sequence showing the failed attempt and the logons that followed](../screenshots/analysis-03-4624-success-sequence.png)
+Every single password attempt produced the exact same fingerprint as the PIN attempts before it, same Subject account, same blank target, same svchost.exe and User32 combination. The only thing that changed was the Sub Status, which shifted from the earlier unresolved 0xC0000380 to 0xC000006A, the code that specifically means wrong password. That was a real signal that something different was happening this time, I just was not seeing it in the field I expected.
 
-I have not yet pinned down the exact record showing Shaza succeeding right after a failure. Rather than force a conclusion the data has not earned, I am leaving that open. This document reflects what the evidence actually supports right now, not what would make the tidiest story.
+So I widened the search to look at everything happening around that exact timestamp, not just 4625 events.
+
+```spl
+index=main host="DESKTOP-HJSIADG" sourcetype="WinEventLog:Security" earliest="08/22/2026:15:47:30" latest="08/22/2026:15:48:00"
+| table _time, EventCode, Account_Name, Logon_Type, Failure_Reason
+| sort _time
+```
+
+![Sequence around the password based failure](../screenshots/analysis-03-4624-success-sequence.png)
+
+Right before the 4625 failure landed, there was a burst of EventCode 5379 events, Credential Manager credential reads, tagged to my actual account, Shaza, milliseconds earlier. That is the closest thing to my real account showing up anywhere in this whole sequence. My best read is that typing the password triggers a check against cached credentials first, and when that comes back negative the actual logon failure still gets attributed to the machine account rather than to me. I want to be honest that I do not have solid documentation confirming that is exactly what is happening internally, it is my interpretation of the timing, not a confirmed mechanism.
+
+What I can say for certain is the observed result: two separate tests, PIN and password, both produced a 4625 failure that never resolved to my real username. That is a stronger and more complete finding than the PIN test alone gave me.
 
 ## What this actually taught me
 
-An event code alone does not tell you what happened. I looked at this same 4625 code from four different angles and it meant something different almost every time.
+An event code alone does not tell you what happened. I looked at this same 4625 code across two separate tests, PIN and password, and it told a different part of the story each time.
 
 The Subject field and the target account field are answering two different questions, and I definitely used to just conflate them without realizing it. Get that wrong and you either miss something real or chase something that was never there in the first place.
 
 A blank target account with a Null SID is its own thing, not just a normal wrong password. I hadn't thought about that distinction before this.
 
-And the authentication method piece is the one I keep coming back to. If an environment leans on PIN or biometric sign in, there's a real gap in 4625 based brute force detection that I would not have known to look for otherwise.
+And the authentication method piece is the one I keep coming back to, especially now that it held up on a second test. If an environment leans on PIN, biometric sign in, or even just a Credential Manager check ahead of the real logon attempt, there is a real gap in 4625 based brute force detection that I would not have known to look for otherwise.
 
 ## Where I left it
 
-At some point I just decided to stop chasing a perfectly clean before and after pair, since it was pretty clear the data was not going to hand me one easily. What I ended up with instead is honestly more useful anyway, a real investigation where my first read of the logs was wrong and I actually caught it, instead of writing it down as fact and moving on.
+I went in expecting to walk away with a clean before and after pair for a brute force detection. Instead I walked away with something I think is more useful: a confirmed, twice tested finding that this specific setup does not produce an attributable 4625 event no matter how the failed logon happens. That is not the detection I set out to build, but it is a real and honest result, and it tells me exactly what any detection I build on top of this data actually needs to account for.
