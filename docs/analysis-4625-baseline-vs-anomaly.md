@@ -2,7 +2,7 @@
 
 ## The moment
 
-I wanted a clean example of a brute force pattern for this lab, so I locked my machine and typed the wrong password four times in a row before logging in correctly. A few minutes later I pulled the logs expecting an easy win: four 4625 failed logon events, back to back, seconds apart. On the surface, that is exactly what a brute force attempt looks like.
+I wanted a clean example of a brute force pattern for this lab, so I locked my machine and typed the wrong password four times in a row before logging in correctly. A few minutes later I pulled the logs expecting an easy win: four 4625 failed logon events, back to back, seconds apart. On the surface that is exactly what a brute force attempt looks like.
 
 I almost took it at face value. Then I actually read the fields.
 
@@ -31,7 +31,7 @@ The table above only surfaces the Subject, which is why every row shows a machin
 ```
 Subject:
     Security ID:    S-1-5-18
-    Account Name:   DESKTOP HJSIADG$
+    Account Name:   DESKTOP-HJSIADG$
     Account Domain: WORKGROUP
 
 Account For Which Logon Failed:
@@ -42,36 +42,36 @@ Account For Which Logon Failed:
 
 ![Raw event showing the blank target account](../screenshots/analysis-02-raw-event-blank-target.png)
 
-The target account field was blank, with a Null SID. That stopped me. Even a wrong password still requires Windows to know which username you were attempting to authenticate as. A blank field with a Null SID means the system never got that far. Whatever this was, it was not a person typing my password incorrectly at the lock screen.
+The target account field was blank, with a Null SID. That stopped me. Even a wrong password still requires Windows to know which username was being attempted. A blank field with a Null SID means the system never got that far. Whatever this was, it was not someone typing my password incorrectly at the lock screen.
 
 ## Ruling myself out
 
-I sign in with a PIN through Windows Hello, not a typed password. That distinction turned out to matter a lot. PIN validation happens locally against the device's TPM and does not travel through the same Negotiate and NTLM pipeline that a password based logon uses, which is the exact pipeline responsible for populating that target account field in a standard 4625 event. In other words, my real failed PIN attempts were never going to show up the way I expected them to.
+I sign in with a PIN through Windows Hello, not a typed password, and that distinction turned out to matter a lot. PIN validation happens locally against the device's TPM and does not travel through the same Negotiate and NTLM pipeline that a password based logon uses, which happens to be the exact pipeline responsible for populating that target account field in a standard 4625 event. So my real failed PIN attempts were never going to show up the way I expected them to.
 
-I also found other people online reporting this identical fingerprint: the same Subject account, the same svchost.exe and User32 combination, the same Status and Sub Status codes, with no clear explanation from Microsoft either. It appears to be a routine background authentication check, not a credential failure at all.
+I also found other people online reporting this identical fingerprint, the same Subject account, the same svchost.exe and User32 combination, the same Status and Sub Status codes, with no real explanation from Microsoft either. It looks like a routine background authentication check, not an actual credential failure.
 
-So the four events I was ready to screenshot as my brute force example were not my attempts. They were something else entirely, something that just happened to occur in the same window.
+So the four events I was ready to screenshot as my brute force example were not my attempts. They were something else entirely that just happened to land in the same window.
 
 ## Trying again, and getting a real answer
 
-I repeated the test using a typed password instead of a PIN. This time the Sub Status changed to 0xC000006A, which specifically means wrong password rather than the earlier unresolved code. That was a real signal. Searching more broadly around that timestamp, I found a successful 4624 logon two and a half seconds later. I initially thought the account name on that success was mine, but running whoami on the actual machine showed my real username was Shaza, not the name that appeared in that result. That one turned out to be a different local placeholder account entirely, unrelated to me.
+I repeated the test using a typed password instead of a PIN. This time the Sub Status changed to 0xC000006A, which specifically means wrong password rather than the earlier unresolved code. That was a real signal.
+
+Searching more broadly around that timestamp, I found a successful 4624 logon two and a half seconds later. I initially assumed the account name on that success was mine, but running whoami on the actual machine showed my real username was Shaza, not the name that showed up in the result. That one turned out to be a different local placeholder account entirely, unrelated to me.
 
 ![Sequence showing the failed attempt and the logons that followed](../screenshots/analysis-03-4624-success-sequence.png)
 
-I have not yet nailed down the exact record showing Shaza succeeding right after a failure. Rather than force a conclusion the data has not earned, I am leaving that open. This document reflects what the evidence actually supports right now, not what would make the tidiest story.
+I have not yet pinned down the exact record showing Shaza succeeding right after a failure. Rather than force a conclusion the data has not earned, I am leaving that open. This document reflects what the evidence actually supports right now, not what would make the tidiest story.
 
 ## What this actually taught me
 
 An event code alone does not tell you what happened. I have looked at this same 4625 code from four different angles now, and it meant something different almost every time.
 
-The Subject field and the target account field answer two different questions. Mixing them up can make you either miss something real or chase something that is not there.
+The Subject field and the target account field answer two different questions, and mixing them up can make you either miss something real or chase something that is not there.
 
-A blank target account with a Null SID is worth treating as its own category, separate from a normal wrong password failure.
+A blank target account with a Null SID is worth treating as its own category, separate from an ordinary wrong password failure.
 
 Authentication method changes what gets logged. An environment relying on PIN or biometric sign in may have a real gap in 4625 based brute force detection, which is a genuinely useful thing to know if I ever have to build detections for an environment like that.
 
 ## Where I left it
 
 I chose to stop chasing a perfectly clean before and after pair once it was clear the data was not going to hand me one easily. What I have instead is more honest: a real investigation where my first read of the logs was wrong, and I caught it before writing it down as fact.
-=======
->>>>>>> 2934309cad3b469c135e3d2eebd2628f0000ab40
