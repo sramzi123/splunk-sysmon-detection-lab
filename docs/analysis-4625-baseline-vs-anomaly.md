@@ -76,7 +76,7 @@ The Subject field and the target account field are answering two different quest
 
 A blank target account with a Null SID is its own thing, not just a normal wrong password. I hadn't thought about that distinction before this.
 
-And the authentication method piece is the one I keep coming back to, especially now that it held up on a second test. If an environment leans on PIN, biometric sign in, or even just a Credential Manager check ahead of the real logon attempt, there is a real gap in 4625 based brute force detection that I would not have known to look for otherwise.
+And the authentication method piece is the one I keep coming back to, especially now that it held up on a second test. If an environment leans on PIN or biometric sign in, there is a real gap in 4625 based brute force detection that I would not have known to look for otherwise. I still do not fully understand the mechanism behind it, and I am okay leaving that as an open question rather than pretending I have it figured out.
 
 ## Where I left it
 
