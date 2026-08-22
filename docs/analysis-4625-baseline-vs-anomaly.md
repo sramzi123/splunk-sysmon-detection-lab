@@ -60,7 +60,7 @@ index=main host="DESKTOP-HJSIADG" sourcetype="WinEventLog:Security" earliest="08
 | sort _time
 ```
 
-![Sequence around the password based failure](../screenshots/analysis-03-4624-success-sequence.png)
+![Sequence around the password based failure](../screenshots/analysis-03-password-retest.png)
 
 Right before the 4625 failure landed, there was a burst of EventCode 5379 events, Credential Manager credential reads, tagged to my actual account, Shaza, milliseconds earlier. That is the closest thing to my real account showing up anywhere in this whole sequence. My best read is that typing the password triggers a check against cached credentials first, and when that comes back negative the actual logon failure still gets attributed to the machine account rather than to me. I want to be honest that I do not have solid documentation confirming that is exactly what is happening internally, it is my interpretation of the timing, not a confirmed mechanism.
 
