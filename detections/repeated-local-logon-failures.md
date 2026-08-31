@@ -27,11 +27,11 @@ This groups matching failures into one minute buckets and only surfaces a bucket
 
 I locked my machine and failed the logon a few times on purpose, then ran the query.
 
-![Detection correctly flagging the failure cluster](../screenshots/repeated-local-logon-failures-verified.png)
+![Detection correctly flagging the failure cluster](repeated-local-logon-failures-verified.png)
 
 One row came back, today's date, four failures in a single minute. Then I pulled the raw events behind that number just to make sure the aggregation was actually counting what I thought it was counting, and not some artifact of the bucket logic.
 
-![Raw events that were aggregated into the detection result](../screenshots/repeated-local-logon-failures-raw-events.png)
+![Raw events that were aggregated into the detection result](repeated-local-logon-failures-raw-events.png)
 
 Four raw events, same minute, same fingerprint across all of them. The math checked out.
 
