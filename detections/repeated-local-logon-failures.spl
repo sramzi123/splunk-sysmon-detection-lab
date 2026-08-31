@@ -1,0 +1,13 @@
+# Detection: Repeated Local Logon Failures
+# ATT&CK: T1110 (Brute Force)
+# Description: Flags 3 or more failed local logon attempts (EventCode 4625)
+# matching a specific fingerprint (Logon_Process=User32, source 127.0.0.1)
+# within a 1-minute window. Built around a real limitation discovered during
+# investigation: on this host, neither PIN nor password-based failures
+# reliably attribute to a real username, so this detects the repeated-failure
+# pattern itself rather than filtering by account.
+
+index=main host="DESKTOP-HJSIADG" sourcetype="WinEventLog:Security" EventCode=4625 Logon_Process=User32 Source_Network_Address="127.0.0.1"
+| bucket _time span=1m
+| stats count as failure_count by _time, host
+| where failure_count >= 3
