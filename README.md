@@ -25,6 +25,11 @@ The lab currently consists of a Windows 11 endpoint forwarding Windows Event Log
 - [Troubleshooting: Sourcetype Conflict](docs/troubleshooting.md) — diagnosing a real config conflict between two overlapping Sysmon add-ons
 - [Investigation: 4625 Baseline vs Anomaly](docs/analysis-4625-baseline-vs-anomaly.md) — reading failed logon events carefully instead of taking them at face value
 
+## Detections
+
+- [Encoded PowerShell Execution](detections/encoded-powershell-execution.md) — T1059.001 / T1027
+- [Repeated Local Logon Failures](detections/repeated-local-logon-failures.md) — T1110, built directly from the 4625 investigation above
+
 ## Current Progress
 
 - [x] Install and configure Splunk Enterprise
@@ -33,27 +38,28 @@ The lab currently consists of a Windows 11 endpoint forwarding Windows Event Log
 - [x] Install and configure Sysmon
 - [x] Verify telemetry ingestion
 - [x] Diagnose and fix a sourcetype parsing conflict
+- [X] Create detection rules
+- [x] Map detections to MITRE ATT&CK
 - [ ] Build dashboards
 - [ ] Simulate attacks
-- [ ] Map detections to MITRE ATT&CK
 
 ## Repository Structure
 ````
 architecture/     diagram source and exported image
 docs/             setup guide, troubleshooting, and investigation writeups
 screenshots/      raw evidence referenced from docs
-detections/       SPL queries once built
+detections/       SPL queries, writeups, and verification screesnhots for each detection
 ````
 ## Roadmap
 
 ### Phase 1
-- Windows Event Log collection
-- Sysmon deployment
-- Splunk Enterprise integration
+- [X] Windows Event Log collection
+- [X] Sysmon deployment
+- [X] Splunk Enterprise integration
 
 ### Phase 2
-- Failed logon detection
-- PowerShell detection
+- [X] Failed logon detection
+- [X] PowerShell detection
 - Registry monitoring
 
 ### Phase 3
