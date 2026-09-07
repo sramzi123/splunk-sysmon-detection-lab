@@ -10,7 +10,7 @@ I checked the forwarder config with btool and it confirmed my sourcetype setting
 & "C:\Program Files\SplunkUniversalForwarder\bin\splunk.exe" btool inputs list "WinEventLog://Microsoft-Windows-Sysmon/Operational" --debug
 ```
 
-![Forwarder config confirmed correct](../screenshots/troubleshooting-01-btool-forwarder-confirmation.png)
+![Forwarder config confirmed correct](../screenshots/troubleshooting/troubleshooting-01-btool-forwarder-confirmation.png)
 
 The output showed my sourcetype line sitting there, clearly winning. So the forwarder was doing exactly what I told it to do. Which meant the problem had to be happening somewhere after the forwarder, not because of it.
 
@@ -28,7 +28,7 @@ And there it was:
 C:\Program Files\Splunk\etc\apps\Splunk_TA_microsoft_sysmon\default\props.conf   rename = xmlwineventlog
 ```
 
-![The rename rule found on the indexer](../screenshots/troubleshooting-02-btool-rename-discovery.png)
+![The rename rule found on the indexer](../screenshots/troubleshooting/troubleshooting-02-btool-rename-discovery.png)
 
 A completely separate add on, installed on the indexer and distinct from the one I had installed on the forwarder, had its own rule silently renaming any Sysmon event back down to the generic sourcetype the moment it hit the index. My forwarder was tagging things correctly the whole time. The indexer was just quietly undoing it.
 
@@ -61,7 +61,7 @@ Confirmed the override had actually taken over using btool again.
 & "C:\Program Files\Splunk\bin\splunk.exe" btool props list "XmlWinEventLog:Microsoft-Windows-Sysmon/Operational" --debug | Select-String "rename"
 ```
 
-![Local override confirmed winning](../screenshots/troubleshooting-03-btool-override-confirmed.png)
+![Local override confirmed winning](../screenshots/troubleshooting/troubleshooting-03-btool-override-confirmed.png)
 
 And then checked fresh events coming in.
 
@@ -70,7 +70,7 @@ index=main host="DESKTOP-HJSIADG" EventID=1 earliest=-2m
 | stats count by sourcetype
 ```
 
-![Events landing under the correct sourcetype](../screenshots/troubleshooting-04-correct-sourcetype-confirmed.png)
+![Events landing under the correct sourcetype](../screenshots/troubleshooting/troubleshooting-04-correct-sourcetype-confirmed.png)
 
 New events finally landed under the correct sourcetype, with fields like process_name and parent_process_name populated the way they were supposed to be all along.
 
