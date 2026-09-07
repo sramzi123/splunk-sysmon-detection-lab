@@ -17,7 +17,7 @@ This document assumes Splunk Enterprise and the Splunk Universal Forwarder are a
 
 I downloaded the Sysmon installer directly from [Microsoft's Sysinternals page](https://learn.microsoft.com/en-us/sysinternals/downloads/sysmon), then extracted it into a working folder.
 
-![Sysmon downloaded and extracted](../screenshots/setup-00-sysmon-download.png)
+![Sysmon downloaded and extracted](../screenshots/setup/setup-00-sysmon-download.png)
 
 I also grabbed the [SwiftOnSecurity Sysmon config](https://github.com/SwiftOnSecurity/sysmon-config), the industry standard starting configuration for balanced signal to noise logging, rather than running Sysmon with its bare defaults.
 
@@ -33,7 +33,7 @@ Verified the service was actually running, rather than just assuming the install
 Get-Service sysmon64
 ```
 
-![Sysmon service running](../screenshots/setup-01-sysmon-service-running.png)
+![Sysmon service running](../screenshots/setup/setup-01-sysmon-service-running.png)
 
 Then confirmed real events were being generated:
 
@@ -41,7 +41,7 @@ Then confirmed real events were being generated:
 Get-WinEvent -LogName "Microsoft-Windows-Sysmon/Operational" -MaxEvents 5
 ```
 
-![Sysmon events generating](../screenshots/setup-02-sysmon-events-generating.png)
+![Sysmon events generating](../screenshots/setup/setup-02-sysmon-events-generating.png)
 
 Seeing actual process creation events come back here was the first real confirmation that Sysmon was working end to end, not just installed and sitting idle.
 
@@ -69,7 +69,7 @@ source = XmlWinEventLog:Microsoft-Windows-Sysmon/Operational
 sourcetype = XmlWinEventLog:Microsoft-Windows-Sysmon/Operational
 ```
 
-![Local inputs.conf override](../screenshots/setup-03-forwarder-local-inputs-conf.png)
+![Local inputs.conf override](../screenshots/setup/setup-03-forwarder-local-inputs-conf.png)
 
 Then restarted the forwarder service to apply the change:
 
@@ -84,7 +84,7 @@ index=main host="DESKTOP-HJSIADG" sourcetype="XmlWinEventLog:Microsoft-Windows-S
 | table _time, process_name, parent_process_name, dest, user, CommandLine
 ```
 
-![CIM fields populated](../screenshots/setup-04-cim-fields-populated.png)
+![CIM fields populated](../screenshots/setup/setup-04-cim-fields-populated.png)
 
 At this stage, `process_name` and `parent_process_name` showed real values, things like `cmd.exe` and `splunkd.exe`, confirming Sysmon events were being correctly parsed into CIM compliant fields rather than just landing as raw XML in Splunk.
 
@@ -96,7 +96,7 @@ Splunk's `btool` turned out to be essential for confirming exactly which config 
 & "C:\Program Files\SplunkUniversalForwarder\bin\splunk.exe" btool inputs list "WinEventLog://Microsoft-Windows-Sysmon/Operational" --debug
 ```
 
-![btool inputs confirmation](../screenshots/setup-05-btool-inputs-confirmation.png)
+![btool inputs confirmation](../screenshots/setup/setup-05-btool-inputs-confirmation.png)
 
 This shows every file contributing settings to that input, in priority order. That turned out to matter a lot later, since it is the exact tool that helped me catch a real config conflict further down the line. See [troubleshooting.md](troubleshooting.md) for that story.
 

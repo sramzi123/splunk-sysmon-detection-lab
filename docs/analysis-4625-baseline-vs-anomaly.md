@@ -14,7 +14,7 @@ index=main host="DESKTOP-HJSIADG" EventCode=4625
 | sort -_time
 ```
 
-![Initial 4625 table view](../screenshots/analysis-01-initial-4625-table.png)
+![Initial 4625 table view](../screenshots/analysis/analysis-01-initial-4625-table.png)
 
 Four events, seconds apart, same host. It matched the story I already had in my head, so it would have been easy to just screenshot this and call it a brute force detection.
 
@@ -28,7 +28,7 @@ Account For Which Logon Failed is the actual username that was typed and rejecte
 
 The table above only surfaces the Subject, which is why every row shows a machine account instead of my name. So I pulled the raw event to see the rest of it.
 
-![Raw event showing the blank target account](../screenshots/analysis-02-raw-event-blank-target.png)
+![Raw event showing the blank target account](../screenshots/analysis/analysis-02-raw-event-blank-target.png)
 
 The target account field was blank, with a Null SID. That stopped me. Even a wrong password still requires Windows to know which username was being attempted. A blank field with a Null SID means the system never got that far. Whatever this was, it was not someone typing my password incorrectly at the lock screen.
 
@@ -50,7 +50,7 @@ index=main host="DESKTOP-HJSIADG" EventCode=4625 earliest=-15m
 | sort _time
 ```
 
-![Password retest showing the same blank target account pattern](../screenshots/analysis-03-password-retest.png)
+![Password retest showing the same blank target account pattern](../screenshots/analysis/analysis-03-password-retest.png)
 
 Every single password attempt produced the exact same fingerprint as the PIN attempts before it, same Subject account, same blank target, same svchost.exe and User32 combination. The only thing that changed was the Sub Status, which shifted from the earlier unresolved 0xC0000380 to 0xC000006A, the code that specifically means wrong password. That was a real signal that something different was happening this time, I just was not seeing it in the field I expected.
 
@@ -62,7 +62,7 @@ index=main host="DESKTOP-HJSIADG" sourcetype="WinEventLog:Security" earliest="08
 | sort _time
 ```
 
-![Burst of Credential Manager reads under my real account right before the failure](../screenshots/analysis-04-5379-correlation.png)
+![Burst of Credential Manager reads under my real account right before the failure](../screenshots/analysis/analysis-04-5379-correlation.png)
 
 Looking at the full sequence, I initially thought the Shaza reads were the closest thing to the failure and almost wrote it up that way. Looking at the actual timestamps more carefully, that is not quite right. The Shaza events land around 15:47:35.116 to 35.119, roughly a second and a half before the failure. The events sitting immediately next to the failure itself, at 15:47:36.591 through 36.593, are all still tagged to the machine account. So even on this closer look, my real account shows up somewhere in the same short window, but it is not the thing directly adjacent to the failure. I do not have a clean, confirmed link between the two, and I would rather say that plainly than round it up into a tidier finding than the data actually supports.
 
