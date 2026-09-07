@@ -60,14 +60,14 @@ detections/       SPL queries, writeups, and verification screesnhots for each d
 ### Phase 2
 - [X] Failed logon detection
 - [X] PowerShell detection
-- Registry monitoring
+- [ ] Registry monitoring
 
 ### Phase 3
-- Atomic Red Team
-- Dashboards
-- MITRE ATT&CK mapping
+- [ ] Atomic Red Team
+- [ ] Dashboards
+- [ ] MITRE ATT&CK mapping
 
 ### Phase 4
-- Active Directory
-- Multi endpoint monitoring
-- Threat hunting scenarios
+- [ ] Active Directory
+- [ ] Multi endpoint monitoring
+- [ ] Threat hunting scenarios
