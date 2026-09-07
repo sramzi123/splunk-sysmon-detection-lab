@@ -28,7 +28,7 @@ The lab currently consists of a Windows 11 endpoint forwarding Windows Event Log
 ## Detections
 
 - [Encoded PowerShell Execution](detections/encoded-powershell-execution/encoded-powershell-execution.md) — T1059.001 / T1027
-- [Repeated Local Logon Failures](detections/repeated-local-logon-failure/repeated-local-logon-failures.md) — T1110, built directly from the 4625 investigation above
+- [Repeated Local Logon Failures](detections/repeated-local-logon-failures/repeated-local-logon-failures.md) — T1110, built directly from the 4625 investigation above
 
 ## Current Progress
 
