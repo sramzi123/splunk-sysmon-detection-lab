@@ -1,0 +1,12 @@
+# Detection: Registry Run Key Persistence
+# ATT&CK: T1547.001 (Registry Run Keys / Startup Folder)
+# Note: Sysmon's built-in SwiftOnSecurity rule tags this event with the
+# older ATT&CK ID T1060, since renamed to T1547.001.
+# Description: Flags new or modified values under the Run and RunOnce
+# registry keys. Will also catch legitimate software registering startup
+# entries (browsers, update helpers), so results need human triage rather
+# than auto-alerting.
+
+index=main sourcetype="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=13
+TargetObject="*\\CurrentVersion\\Run\\*" OR TargetObject="*\\CurrentVersion\\RunOnce\\*"
+| table _time, host, user, Image, TargetObject, Details
