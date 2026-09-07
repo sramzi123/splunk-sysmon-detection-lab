@@ -27,8 +27,8 @@ The lab currently consists of a Windows 11 endpoint forwarding Windows Event Log
 
 ## Detections
 
-- [Encoded PowerShell Execution](detections/encoded-powershell-execution.md) — T1059.001 / T1027
-- [Repeated Local Logon Failures](detections/repeated-local-logon-failures.md) — T1110, built directly from the 4625 investigation above
+- [Encoded PowerShell Execution](detections/encoded-powershell-execution/encoded-powershell-execution.md) — T1059.001 / T1027
+- [Repeated Local Logon Failures](detections/repeated-local-logon-failutre/repeated-local-logon-failures.md) — T1110, built directly from the 4625 investigation above
 
 ## Current Progress
 
@@ -63,11 +63,11 @@ detections/       SPL queries, writeups, and verification screesnhots for each d
 - [ ] Registry monitoring
 
 ### Phase 3
-- [ ] Atomic Red Team
 - [ ] Dashboards
-- [ ] MITRE ATT&CK mapping
+- [ ] Additional manually simulated detections
 
 ### Phase 4
 - [ ] Active Directory
+- [ ] Microsoft Defender for Endpoint
 - [ ] Multi endpoint monitoring
 - [ ] Threat hunting scenarios
