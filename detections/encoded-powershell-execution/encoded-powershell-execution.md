@@ -37,7 +37,7 @@ CommandLine="*-EncodedCommand*" OR CommandLine="*-enc*" OR CommandLine="*-e *"
 
 Ran it, and it surfaced exactly the one event I had just generated, nothing else.
 
-![Encoded PowerShell execution correctly surfaced by the detection](../screenshots/detection-encoded-powershell-verified.png)
+![Encoded PowerShell execution correctly surfaced by the detection](detection-encoded-powershell-verified.png)
 
 ## Why it usually shows nothing
 
